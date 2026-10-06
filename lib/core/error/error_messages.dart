@@ -37,4 +37,6 @@ const _messages = <String, String>{
       'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
   'USER_INVALID_REFRESH_TOKEN':
       'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+  // Location
+  'LOCATION_PROVINCE_NOT_FOUND': 'Không tìm thấy tỉnh/thành phố.',
 };

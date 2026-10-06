@@ -12,6 +12,10 @@ class LocationRepository {
   final LocationApi _api;
 
   Future<List<LocationItemDto>> provinces() => _api.provinces();
+
+  /// Wards of one province; ward `codename` is unique within it only.
+  Future<List<LocationItemDto>> wards(String provinceCode) =>
+      _api.wards(provinceCode);
 }
 
 @Riverpod(keepAlive: true)
