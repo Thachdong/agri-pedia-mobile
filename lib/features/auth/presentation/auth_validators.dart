@@ -31,6 +31,13 @@ abstract final class AuthValidators {
 
   static final Validator bio = Validators.maxLength(bioMaxLength);
 
+  /// Login checks presence only (1..128, `LoginUserDto`): the strength
+  /// rule applies when a password is set, not when it is typed to log in.
+  static final Validator loginPassword = Validators.compose([
+    Validators.required('Vui lòng nhập mật khẩu'),
+    Validators.maxLength(Validators.passwordMaxLength),
+  ]);
+
   /// Client only, never sent.
   static Validator confirmPassword(String Function() password) =>
       Validators.compose([
