@@ -60,7 +60,12 @@ const _messages = <String, String>{
   'USER_BUSINESS_TYPE_REQUIRED': 'Vui lòng chọn loại hình kinh doanh.',
   'USER_BUSINESS_TYPE_NOT_ALLOWED':
       'Nông dân không cần chọn loại hình kinh doanh.',
-  // OTP (activate, resend, change-password)
+  // OTP (activate, resend, reset-password, change-password)
+  'OTP_ACCOUNT_NOT_FOUND':
+      'Không tìm thấy tài khoản với email/số điện thoại này.',
+  'OTP_ACCOUNT_NOT_ACTIVE': 'Tài khoản chưa được kích hoạt.',
+  'OTP_ALREADY_REQUESTED':
+      'Mã xác thực đã được gửi và vẫn còn hiệu lực. Vui lòng kiểm tra lại.',
   'OTP_INVALID_CODE': 'Mã xác thực không đúng.',
   'OTP_NOT_FOUND': 'Không tìm thấy mã xác thực cho tài khoản này.',
   'OTP_ALREADY_CONSUMED': 'Mã xác thực đã được sử dụng.',
