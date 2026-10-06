@@ -5,6 +5,7 @@ import 'package:ui_ux/core/network/api_exception.dart';
 import 'package:ui_ux/features/auth/data/auth_api.dart';
 import 'package:ui_ux/features/auth/data/auth_repository.dart';
 import 'package:ui_ux/features/auth/data/dtos/activate_request.dart';
+import 'package:ui_ux/features/auth/data/dtos/confirm_password_reset_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/request_password_reset_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/resend_code_request.dart';
 import 'package:ui_ux/features/auth/domain/models/otp_purpose.dart';
@@ -219,5 +220,37 @@ void main() {
         ),
       );
     });
+  });
+
+  test('confirmPasswordReset: POST /auth/reset-password/confirm '
+      '{identifier, code, newPassword}', () async {
+    when(
+      () => client.post<void>(
+        '/auth/reset-password/confirm',
+        body: any(named: 'body'),
+      ),
+    ).thenAnswer((_) async {});
+
+    await repository.confirmPasswordReset(
+      const ConfirmPasswordResetRequest(
+        identifier: 'farmer@example.com',
+        code: '123456',
+        newPassword: 'new secret',
+      ),
+    );
+
+    expect(
+      verify(
+        () => client.post<void>(
+          '/auth/reset-password/confirm',
+          body: captureAny(named: 'body'),
+        ),
+      ).captured.single,
+      {
+        'identifier': 'farmer@example.com',
+        'code': '123456',
+        'newPassword': 'new secret',
+      },
+    );
   });
 }
