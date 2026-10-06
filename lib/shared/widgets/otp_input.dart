@@ -111,30 +111,34 @@ class _OtpInputState extends State<OtpInput> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Semantics(
-              label: 'Mã xác thực ${widget.length} chữ số',
-              textField: true,
-              child: Stack(
-                children: [
-                  _Boxes(
+            Stack(
+              children: [
+                // Boxes are visual only; screen readers use the field.
+                ExcludeSemantics(
+                  child: _Boxes(
                     length: widget.length,
                     code: _controller.text,
                     focused: _focusNode.hasFocus,
                     hasError: error != null,
                     enabled: widget.enabled,
                   ),
-                  Positioned.fill(
-                    child: _HiddenField(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      length: widget.length,
-                      autofocus: widget.autofocus,
-                      enabled: widget.enabled,
-                      onChanged: (code) => _handleChanged(code, field),
+                ),
+                Positioned.fill(
+                  child: MergeSemantics(
+                    child: Semantics(
+                      label: 'Mã xác thực ${widget.length} chữ số',
+                      child: _HiddenField(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        length: widget.length,
+                        autofocus: widget.autofocus,
+                        enabled: widget.enabled,
+                        onChanged: (code) => _handleChanged(code, field),
+                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             if (error != null)
               Padding(

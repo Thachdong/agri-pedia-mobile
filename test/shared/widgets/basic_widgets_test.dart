@@ -78,6 +78,22 @@ void main() {
     });
   });
 
+  testWidgets('AppTextField follows obscure changes', (tester) async {
+    Future<void> pump({required bool obscure}) =>
+        tester.pumpApp(AppTextField(label: 'Mật khẩu', obscure: obscure));
+
+    await pump(obscure: false);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).obscureText,
+      isFalse,
+    );
+    await pump(obscure: true);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).obscureText,
+      isTrue,
+    );
+  });
+
   group('LoginTypeTabs', () {
     testWidgets('fires only on an actual change', (tester) async {
       final changes = <LoginType>[];

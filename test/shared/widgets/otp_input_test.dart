@@ -98,4 +98,17 @@ void main() {
     final field = tester.widget<TextField>(find.byType(TextField));
     expect(field.enabled, isFalse);
   });
+
+  testWidgets('screen readers see one labelled text field', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await pumpOtp(tester);
+    await type(tester, '12');
+
+    expect(
+      find.bySemanticsLabel(RegExp('Mã xác thực 6 chữ số')),
+      findsOneWidget,
+    );
+    expect(find.bySemanticsLabel('1'), findsNothing);
+    semantics.dispose();
+  });
 }

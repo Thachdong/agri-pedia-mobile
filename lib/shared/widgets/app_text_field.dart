@@ -67,6 +67,12 @@ class _AppTextFieldState extends State<AppTextField> {
   late bool _hidden = widget.obscure;
 
   @override
+  void didUpdateWidget(AppTextField old) {
+    super.didUpdateWidget(old);
+    if (old.obscure != widget.obscure) _hidden = widget.obscure;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final text = context.text;
     return Column(
