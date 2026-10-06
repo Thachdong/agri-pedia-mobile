@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ui_ux/core/config/env.dart';
 import 'package:ui_ux/core/network/api_exception.dart';
+import 'package:ui_ux/core/network/debug_log_interceptor.dart';
 
 part 'api_client.g.dart';
 
@@ -145,17 +146,7 @@ Dio dioClient(Ref ref) {
       responseType: ResponseType.json,
     ),
   );
-  if (kDebugMode) {
-    dio.interceptors.add(
-      LogInterceptor(
-        // Headers carry the Bearer token: never log them.
-        requestHeader: false,
-        responseHeader: false,
-        requestBody: true,
-        logPrint: (line) => debugPrint(line.toString()),
-      ),
-    );
-  }
+  if (kDebugMode) dio.interceptors.add(DebugLogInterceptor());
   ref.onDispose(dio.close);
   return dio;
 }
