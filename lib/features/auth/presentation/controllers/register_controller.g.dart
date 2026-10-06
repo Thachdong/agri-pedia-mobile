@@ -10,16 +10,25 @@ part of 'register_controller.dart';
 // ignore_for_file: type=lint, type=warning
 /// Submits the register form. Invalidates nothing: no cached data depends on
 /// a new, not-yet-logged-in account.
+///
+/// DISTRIBUTOR success → saves the activate handoff (loginType, identifier,
+/// at = now) so /auth/activate can prefill and run the resend countdown.
 
 @ProviderFor(RegisterController)
 final registerControllerProvider = RegisterControllerProvider._();
 
 /// Submits the register form. Invalidates nothing: no cached data depends on
 /// a new, not-yet-logged-in account.
+///
+/// DISTRIBUTOR success → saves the activate handoff (loginType, identifier,
+/// at = now) so /auth/activate can prefill and run the resend countdown.
 final class RegisterControllerProvider
     extends $AsyncNotifierProvider<RegisterController, void> {
   /// Submits the register form. Invalidates nothing: no cached data depends on
   /// a new, not-yet-logged-in account.
+  ///
+  /// DISTRIBUTOR success → saves the activate handoff (loginType, identifier,
+  /// at = now) so /auth/activate can prefill and run the resend countdown.
   RegisterControllerProvider._()
     : super(
         from: null,
@@ -40,10 +49,13 @@ final class RegisterControllerProvider
 }
 
 String _$registerControllerHash() =>
-    r'01af3390d1b1e54282ce7d51fd80b93959fba214';
+    r'24c70b75709774896257f31b82923e0eda0489c7';
 
 /// Submits the register form. Invalidates nothing: no cached data depends on
 /// a new, not-yet-logged-in account.
+///
+/// DISTRIBUTOR success → saves the activate handoff (loginType, identifier,
+/// at = now) so /auth/activate can prefill and run the resend countdown.
 
 abstract class _$RegisterController extends $AsyncNotifier<void> {
   FutureOr<void> build();
