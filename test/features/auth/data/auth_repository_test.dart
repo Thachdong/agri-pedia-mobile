@@ -4,6 +4,9 @@ import 'package:ui_ux/core/network/api_client.dart';
 import 'package:ui_ux/core/network/api_exception.dart';
 import 'package:ui_ux/features/auth/data/auth_api.dart';
 import 'package:ui_ux/features/auth/data/auth_repository.dart';
+import 'package:ui_ux/features/auth/data/dtos/activate_request.dart';
+import 'package:ui_ux/features/auth/data/dtos/resend_code_request.dart';
+import 'package:ui_ux/features/auth/domain/models/otp_purpose.dart';
 
 import '../../../fixtures/auth_fixtures.dart';
 
@@ -92,5 +95,44 @@ void main() {
         ),
       ),
     );
+  });
+
+  group('activate / resendCode', () {
+    Object? bodySentTo(String path) => verify(
+      () => client.post<void>(path, body: captureAny(named: 'body')),
+    ).captured.single;
+
+    test('activate: POST /auth/activate {identifier, code}', () async {
+      when(
+        () => client.post<void>('/auth/activate', body: any(named: 'body')),
+      ).thenAnswer((_) async {});
+
+      await repository.activate(
+        const ActivateRequest(identifier: 'npp@example.com', code: '123456'),
+      );
+
+      expect(bodySentTo('/auth/activate'), {
+        'identifier': 'npp@example.com',
+        'code': '123456',
+      });
+    });
+
+    test('resendCode: POST /auth/resend with server purpose value', () async {
+      when(
+        () => client.post<void>('/auth/resend', body: any(named: 'body')),
+      ).thenAnswer((_) async {});
+
+      await repository.resendCode(
+        const ResendCodeRequest(
+          identifier: '0901234567',
+          purpose: OtpPurpose.activateDistributor,
+        ),
+      );
+
+      expect(bodySentTo('/auth/resend'), {
+        'identifier': '0901234567',
+        'purpose': 'ACTIVATE_DISTRIBUTOR',
+      });
+    });
   });
 }

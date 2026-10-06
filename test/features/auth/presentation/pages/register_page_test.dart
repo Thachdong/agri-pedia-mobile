@@ -48,6 +48,9 @@ void main() {
     store = _MockHandoffStore();
     when(() => repo.register(any())).thenAnswer((_) async {});
     when(() => store.save(any())).thenAnswer((_) async {});
+    when(
+      () => store.read(OtpPurpose.activateDistributor),
+    ).thenAnswer((_) async => null);
     container = makeContainer(
       overrides: [
         authRepositoryProvider.overrideWithValue(repo),
@@ -113,7 +116,7 @@ void main() {
         ),
       ),
     ).called(1);
-    expect(find.text('Kích hoạt tài khoản'), findsOneWidget);
+    expect(find.text('Activate Account'), findsOneWidget);
   });
 
   testWidgets('FARMER success → no handoff, /auth/login', (tester) async {

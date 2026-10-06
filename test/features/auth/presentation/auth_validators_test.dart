@@ -71,4 +71,13 @@ void main() {
     expect(distributor(BusinessType.seedsSeedlings), isNull);
     expect(farmer(null), isNull);
   });
+
+  test('otpCode: exactly 6 digits', () {
+    const message = 'Vui lòng nhập đủ 6 chữ số';
+    expect(AuthValidators.otpCode('123456'), isNull);
+    expect(AuthValidators.otpCode(' 123456 '), isNull);
+    for (final bad in ['', '12345', '1234567', '12a456', '12 456']) {
+      expect(AuthValidators.otpCode(bad), message, reason: bad);
+    }
+  });
 }
