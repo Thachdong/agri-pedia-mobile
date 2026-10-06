@@ -11,3 +11,5 @@ export 'package:ui_ux/features/auth/presentation/pages/register_page.dart'
     show RegisterPage;
 export 'package:ui_ux/features/auth/presentation/pages/reset_password_page.dart'
     show ResetPasswordPage;
+export 'package:ui_ux/features/auth/presentation/post_login_path.dart'
+    show loginFromParam, postLoginPath;

@@ -15,4 +15,6 @@ abstract final class Routes {
   /// Routes that need login; the auth redirect (mb-auth-session) guards them.
   /// Spec pages so far are all public.
   static const privatePrefixes = <String>[];
+
+  static bool isPrivate(String path) => privatePrefixes.any(path.startsWith);
 }

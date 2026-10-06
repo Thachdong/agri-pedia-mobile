@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:ui_ux/app/router/auth_redirect.dart';
 import 'package:ui_ux/core/router/routes.dart';
 import 'package:ui_ux/features/auth/auth.dart';
 
@@ -8,16 +9,27 @@ part 'app_router.g.dart';
 
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
+  // Bridges the session to go_router: a change re-runs [authRedirect]
+  // without rebuilding the router.
+  final auth = ValueNotifier<AuthState?>(ref.read(authStateProvider).value);
+  ref.listen(authStateProvider, (_, next) => auth.value = next.value);
+
   final router = GoRouter(
     initialLocation: Routes.home,
     debugLogDiagnostics: false,
+    refreshListenable: auth,
+    redirect: (context, state) => authRedirect(auth.value, state.uri),
     routes: [
       // TODO(distributor): replace with the home page ("/").
       GoRoute(
         path: Routes.home,
         builder: (context, state) => const _PlaceholderPage(
           title: 'AgriPedia',
-          links: {'Đăng ký': Routes.register, 'Kích hoạt': Routes.activate},
+          links: {
+            'Đăng nhập': Routes.login,
+            'Đăng ký': Routes.register,
+            'Kích hoạt': Routes.activate,
+          },
           showHomeLink: false,
         ),
       ),
@@ -44,7 +56,10 @@ GoRouter appRouter(Ref ref) {
       ),
     ],
   );
-  ref.onDispose(router.dispose);
+  ref.onDispose(() {
+    router.dispose();
+    auth.dispose();
+  });
   return router;
 }
 
