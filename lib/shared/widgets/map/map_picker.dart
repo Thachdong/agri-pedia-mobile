@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:ui_ux/core/config/env.dart';
 import 'package:ui_ux/core/device/geo_point.dart';
 import 'package:ui_ux/shared/extensions/theme_context.dart';
+import 'package:ui_ux/shared/theme/app_spacing.dart';
 
 /// OSM map to pick one point: tap anywhere to place / move the marker.
 ///
@@ -115,11 +116,30 @@ class _MapPickerState extends State<MapPicker> {
                 ),
               ],
             ),
-          const SimpleAttributionWidget(
-            source: Text('OpenStreetMap contributors'),
-          ),
+          const _Attribution(),
         ],
       ),
     );
   }
+}
+
+/// OSM attribution (required by the tile usage policy). Own widget instead
+/// of `SimpleAttributionWidget`, whose fixed Row overflows on narrow maps.
+class _Attribution extends StatelessWidget {
+  const _Attribution();
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.bottomRight,
+    child: ColoredBox(
+      color: context.scheme.surface,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.xxs,
+        ),
+        child: Text('© OpenStreetMap', style: context.text.labelSmall),
+      ),
+    ),
+  );
 }

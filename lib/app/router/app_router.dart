@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ui_ux/core/router/routes.dart';
+import 'package:ui_ux/features/auth/auth.dart';
 
 part 'app_router.g.dart';
 
@@ -14,7 +15,26 @@ GoRouter appRouter(Ref ref) {
       // TODO(distributor): replace with the home page ("/").
       GoRoute(
         path: Routes.home,
-        builder: (context, state) => const _PlaceholderPage(),
+        builder: (context, state) => const _PlaceholderPage(
+          title: 'AgriPedia',
+          links: {'Đăng ký': Routes.register},
+          showHomeLink: false,
+        ),
+      ),
+      GoRoute(
+        path: Routes.register,
+        builder: (context, state) => const RegisterPage(),
+      ),
+      // TODO(auth-activate): replace with ActivatePage.
+      GoRoute(
+        path: Routes.activate,
+        builder: (context, state) =>
+            const _PlaceholderPage(title: 'Kích hoạt tài khoản'),
+      ),
+      // TODO(auth-login): replace with LoginPage.
+      GoRoute(
+        path: Routes.login,
+        builder: (context, state) => const _PlaceholderPage(title: 'Đăng nhập'),
       ),
     ],
   );
@@ -22,11 +42,37 @@ GoRouter appRouter(Ref ref) {
   return router;
 }
 
-/// Temporary screen until the first feature page exists.
+/// Temporary screen for routes whose feature page doesn't exist yet.
 class _PlaceholderPage extends StatelessWidget {
-  const _PlaceholderPage();
+  const _PlaceholderPage({
+    required this.title,
+    this.links = const {},
+    this.showHomeLink = true,
+  });
+
+  final String title;
+  final bool showHomeLink;
+
+  /// Button label → path, to reach built pages during development.
+  final Map<String, String> links;
 
   @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('AgriPedia')));
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: Text(title)),
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('$title (đang phát triển)'),
+          for (final MapEntry(key: label, value: path) in links.entries)
+            TextButton(onPressed: () => context.go(path), child: Text(label)),
+          if (showHomeLink)
+            TextButton(
+              onPressed: () => context.go(Routes.home),
+              child: const Text('Về trang chủ'),
+            ),
+        ],
+      ),
+    ),
+  );
 }

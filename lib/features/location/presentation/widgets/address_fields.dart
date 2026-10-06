@@ -15,7 +15,8 @@ import 'package:ui_ux/shared/widgets/app_text_field.dart';
 /// province → ward (ward list follows the province and resets when it
 /// changes), house number / street, and the map point.
 ///
-/// Controlled: [value] in, every edit out through [onChanged]. Validators
+/// Controlled: [value] in, every edit out through [onChanged] (house
+/// number is read from [value] only on first build). Validators
 /// run with the parent `Form`. [errorText] = server address error
 /// (USER_LOCATION_INVALID, USER_INVALID_COORDINATES), shown under the section.
 class AddressFields extends ConsumerStatefulWidget {
@@ -37,18 +38,12 @@ class AddressFields extends ConsumerStatefulWidget {
 }
 
 class _AddressFieldsState extends ConsumerState<AddressFields> {
+  /// Seeded once from [AddressFields.value]; afterwards the text box is the
+  /// source of truth (edits flow out through onChanged). Setting `.text`
+  /// from didUpdateWidget would notify the Form during build.
   late final _houseNumber = TextEditingController(
     text: widget.value.houseNumber,
   );
-
-  @override
-  void didUpdateWidget(AddressFields old) {
-    super.didUpdateWidget(old);
-    // Reset from outside (e.g. form cleared): keep the text box in sync.
-    if (widget.value.houseNumber != _houseNumber.text) {
-      _houseNumber.text = widget.value.houseNumber;
-    }
-  }
 
   @override
   void dispose() {
@@ -56,7 +51,21 @@ class _AddressFieldsState extends ConsumerState<AddressFields> {
     super.dispose();
   }
 
-  void _emit(AddressInput next) => widget.onChanged(next);
+  /// Latest value, including edits not yet echoed back through
+  /// [AddressFields.value] (two edits before the parent rebuilds must not
+  /// overwrite each other).
+  late AddressInput _latest = widget.value;
+
+  @override
+  void didUpdateWidget(AddressFields old) {
+    super.didUpdateWidget(old);
+    _latest = widget.value;
+  }
+
+  void _update(AddressInput Function(AddressInput current) change) {
+    _latest = change(_latest);
+    widget.onChanged(_latest);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +96,9 @@ class _AddressFieldsState extends ConsumerState<AddressFields> {
           onRetry: () => ref.invalidate(provincesProvider),
           validator: (_) => AddressValidators.province(provinceCode),
           enabled: widget.enabled,
-          onChanged: (p) =>
-              _emit(value.copyWith(provinceCode: p.codename, wardCode: null)),
+          onChanged: (p) => _update(
+            (a) => a.copyWith(provinceCode: p.codename, wardCode: null),
+          ),
         ),
         const SizedBox(height: AppSpacing.md),
         AppSelectField(
@@ -111,7 +121,7 @@ class _AddressFieldsState extends ConsumerState<AddressFields> {
               : () => ref.invalidate(wardsProvider(provinceCode)),
           validator: (_) => AddressValidators.ward(value.wardCode),
           enabled: widget.enabled && provinceCode != null,
-          onChanged: (w) => _emit(value.copyWith(wardCode: w.codename)),
+          onChanged: (w) => _update((a) => a.copyWith(wardCode: w.codename)),
         ),
         const SizedBox(height: AppSpacing.md),
         AppTextField(
@@ -122,14 +132,14 @@ class _AddressFieldsState extends ConsumerState<AddressFields> {
           textInputAction: TextInputAction.done,
           maxLength: AddressValidators.houseNumberMaxLength,
           enabled: widget.enabled,
-          onChanged: (text) => _emit(value.copyWith(houseNumber: text)),
+          onChanged: (text) => _update((a) => a.copyWith(houseNumber: text)),
         ),
         const SizedBox(height: AppSpacing.md),
         LocationPickerField(
           value: value.point,
           validator: AddressValidators.point,
           enabled: widget.enabled,
-          onChanged: (p) => _emit(value.copyWith(point: p)),
+          onChanged: (p) => _update((a) => a.copyWith(point: p)),
         ),
         if (widget.errorText case final error?)
           Padding(
