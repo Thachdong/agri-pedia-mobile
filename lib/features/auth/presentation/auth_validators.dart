@@ -9,6 +9,10 @@ abstract final class AuthValidators {
   static const usernameMaxLength = 100;
   static const bioMaxLength = 1000;
 
+  /// Digits of an OTP (activate, change-password). Server accepts 4..10 and
+  /// sends OTP_LENGTH (default 6); boxes of `OtpInput` use this too.
+  static const otpCodeLength = 6;
+
   /// Email or VN phone depending on the selected tab; ≤ 255.
   static Validator identifier(LoginType loginType) => Validators.compose([
     switch (loginType) {
@@ -17,6 +21,9 @@ abstract final class AuthValidators {
     },
     Validators.maxLength(identifierMaxLength),
   ]);
+
+  /// Exactly [otpCodeLength] digits.
+  static final Validator otpCode = Validators.otp(length: otpCodeLength);
 
   /// Optional (server defaults it to the identifier); empty after trim is
   /// not sent, so only the max length is checked.

@@ -7,10 +7,24 @@ import 'package:ui_ux/core/network/api_exception.dart';
 /// Server `message` is developer text (English) and is not shown.
 String errorMessageOf(Object? error) {
   if (error is ApiException) {
+    if (_blockedUntil(error) case final until?) {
+      return 'Bạn đã thử quá nhiều lần. Vui lòng thử lại sau ${_hhmm(until)}.';
+    }
     return _messages[error.code] ?? _byStatus(error.statusCode) ?? _generic;
   }
   return _generic;
 }
+
+/// `OTP_BLOCKED` may carry `details.blockUntil` (ISO date), shown in local
+/// time.
+DateTime? _blockedUntil(ApiException error) {
+  if (error.code != 'OTP_BLOCKED') return null;
+  final raw = error.details?['blockUntil'];
+  return raw is String ? DateTime.tryParse(raw)?.toLocal() : null;
+}
+
+String _hhmm(DateTime t) =>
+    '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
 const _generic = 'Đã có lỗi xảy ra. Vui lòng thử lại.';
 
