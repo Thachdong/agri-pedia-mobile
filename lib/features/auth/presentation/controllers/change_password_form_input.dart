@@ -7,8 +7,8 @@ part 'change_password_form_input.freezed.dart';
 
 /// Change-password form values as typed; [toRequest] applies the submit
 /// rules. [loginType] only picks the identifier validator / keyboard and is
-/// kept for the resend handoff; it is not sent. Confirm Password is checked
-/// client side only and is not part of the input.
+/// kept for the resend and login handoffs; it is not sent. Confirm Password
+/// is checked client side only and is not part of the input.
 @freezed
 abstract class ChangePasswordFormInput with _$ChangePasswordFormInput {
   const factory ChangePasswordFormInput({

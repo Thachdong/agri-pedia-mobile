@@ -141,7 +141,7 @@ class _ChangePasswordFormState extends ConsumerState<ChangePasswordForm> {
     );
     await ref
         .read(confirmPasswordResetControllerProvider.notifier)
-        .submit(input.toRequest());
+        .submit(input.toRequest(), loginType: input.loginType);
   }
 
   /// Only the identifier is needed to resend; other fields may be empty.

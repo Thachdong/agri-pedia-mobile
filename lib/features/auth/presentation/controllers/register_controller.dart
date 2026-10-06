@@ -6,6 +6,7 @@ import 'package:ui_ux/features/auth/data/auth_handoff_store.dart';
 import 'package:ui_ux/features/auth/data/auth_repository.dart';
 import 'package:ui_ux/features/auth/data/dtos/register_request.dart';
 import 'package:ui_ux/features/auth/domain/models/auth_handoff.dart';
+import 'package:ui_ux/features/auth/domain/models/login_handoff.dart';
 import 'package:ui_ux/features/auth/domain/models/otp_purpose.dart';
 import 'package:ui_ux/shared/enums/user_role.dart';
 
@@ -26,6 +27,7 @@ enum RegisterOutcome {
 ///
 /// DISTRIBUTOR success → saves the activate handoff (loginType, identifier,
 /// at = now) so /auth/activate can prefill and run the resend countdown.
+/// FARMER success → saves the login handoff so /auth/login can prefill.
 @riverpod
 class RegisterController extends _$RegisterController {
   @override
@@ -45,6 +47,12 @@ class RegisterController extends _$RegisterController {
     final result = await AsyncValue.guard(() async {
       await repository.register(request);
       if (request.role != UserRole.distributor) {
+        await handoffStore.saveLogin(
+          LoginHandoff(
+            loginType: request.loginType,
+            identifier: request.identifier,
+          ),
+        );
         return RegisterOutcome.canLogin;
       }
       await handoffStore.save(

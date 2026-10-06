@@ -6,6 +6,7 @@ import 'package:ui_ux/features/auth/data/auth_handoff_store.dart';
 import 'package:ui_ux/features/auth/data/auth_repository.dart';
 import 'package:ui_ux/features/auth/data/dtos/activate_request.dart';
 import 'package:ui_ux/features/auth/domain/models/auth_handoff.dart';
+import 'package:ui_ux/features/auth/domain/models/login_handoff.dart';
 import 'package:ui_ux/features/auth/domain/models/otp_purpose.dart';
 import 'package:ui_ux/features/auth/presentation/controllers/activate_controller.dart';
 import 'package:ui_ux/features/auth/presentation/controllers/auth_handoff_provider.dart';
@@ -35,6 +36,9 @@ void main() {
   late ProviderContainer container;
 
   setUpAll(() {
+    registerFallbackValue(
+      const LoginHandoff(loginType: LoginType.email, identifier: 'x'),
+    );
     registerFallbackValue(request);
     registerFallbackValue(purpose);
   });
@@ -42,6 +46,7 @@ void main() {
   setUp(() {
     repo = _MockAuthRepository();
     store = _MockHandoffStore();
+    when(() => store.saveLogin(any())).thenAnswer((_) async {});
     var saved = handoff as AuthHandoff?;
     when(() => store.read(purpose)).thenAnswer((_) async => saved);
     when(() => store.clear(purpose)).thenAnswer((_) async => saved = null);
@@ -70,7 +75,10 @@ void main() {
     addTearDown(handoffSub.close);
     expect(await container.read(authHandoffProvider(purpose).future), handoff);
 
-    expect(await notifier().submit(request), isTrue);
+    expect(
+      await notifier().submit(request, loginType: LoginType.email),
+      isTrue,
+    );
 
     verify(() => repo.activate(request)).called(1);
     verify(() => store.clear(purpose)).called(1);
@@ -89,7 +97,10 @@ void main() {
     final sub = container.listen(activateControllerProvider, (_, _) {});
     addTearDown(sub.close);
 
-    expect(await notifier().submit(request), isFalse);
+    expect(
+      await notifier().submit(request, loginType: LoginType.email),
+      isFalse,
+    );
 
     final state = container.read(activateControllerProvider);
     expect(

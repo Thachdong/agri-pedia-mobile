@@ -123,7 +123,7 @@ class _ActivateFormState extends ConsumerState<ActivateForm> {
     );
     await ref
         .read(activateControllerProvider.notifier)
-        .submit(input.toRequest());
+        .submit(input.toRequest(), loginType: input.loginType);
   }
 
   /// Only the identifier is needed to resend; the code may be empty.

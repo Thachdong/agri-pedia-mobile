@@ -14,6 +14,7 @@ part of 'register_controller.dart';
 ///
 /// DISTRIBUTOR success → saves the activate handoff (loginType, identifier,
 /// at = now) so /auth/activate can prefill and run the resend countdown.
+/// FARMER success → saves the login handoff so /auth/login can prefill.
 
 @ProviderFor(RegisterController)
 final registerControllerProvider = RegisterControllerProvider._();
@@ -24,6 +25,7 @@ final registerControllerProvider = RegisterControllerProvider._();
 ///
 /// DISTRIBUTOR success → saves the activate handoff (loginType, identifier,
 /// at = now) so /auth/activate can prefill and run the resend countdown.
+/// FARMER success → saves the login handoff so /auth/login can prefill.
 final class RegisterControllerProvider
     extends $AsyncNotifierProvider<RegisterController, RegisterOutcome?> {
   /// Submits the register form. State: null until a submit succeeds, then the
@@ -32,6 +34,7 @@ final class RegisterControllerProvider
   ///
   /// DISTRIBUTOR success → saves the activate handoff (loginType, identifier,
   /// at = now) so /auth/activate can prefill and run the resend countdown.
+  /// FARMER success → saves the login handoff so /auth/login can prefill.
   RegisterControllerProvider._()
     : super(
         from: null,
@@ -52,7 +55,7 @@ final class RegisterControllerProvider
 }
 
 String _$registerControllerHash() =>
-    r'db962295c5d1f2f4bdab352f8225d2670fb9a378';
+    r'804be850002dba6b91670eb0f6ec1d65f75add51';
 
 /// Submits the register form. State: null until a submit succeeds, then the
 /// [RegisterOutcome]. Invalidates nothing: no cached data depends on a new,
@@ -60,6 +63,7 @@ String _$registerControllerHash() =>
 ///
 /// DISTRIBUTOR success → saves the activate handoff (loginType, identifier,
 /// at = now) so /auth/activate can prefill and run the resend countdown.
+/// FARMER success → saves the login handoff so /auth/login can prefill.
 
 abstract class _$RegisterController extends $AsyncNotifier<RegisterOutcome?> {
   FutureOr<RegisterOutcome?> build();

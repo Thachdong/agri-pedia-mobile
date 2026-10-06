@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ui_ux/features/auth/data/auth_handoff_store.dart';
 import 'package:ui_ux/features/auth/domain/models/auth_handoff.dart';
+import 'package:ui_ux/features/auth/domain/models/login_handoff.dart';
 import 'package:ui_ux/features/auth/domain/models/otp_purpose.dart';
 
 part 'auth_handoff_provider.g.dart';
@@ -11,3 +12,8 @@ part 'auth_handoff_provider.g.dart';
 @riverpod
 Future<AuthHandoff?> authHandoff(Ref ref, OtpPurpose purpose) =>
     ref.watch(authHandoffStoreProvider).read(purpose);
+
+/// Account to prefill on /auth/login; null when absent. Read once on init.
+@riverpod
+Future<LoginHandoff?> loginHandoff(Ref ref) =>
+    ref.watch(authHandoffStoreProvider).readLogin();

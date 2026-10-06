@@ -7,7 +7,8 @@ part 'activate_form_input.freezed.dart';
 
 /// Activate form values as typed; [toRequest] applies the submit rules.
 /// [loginType] only picks the identifier validator / keyboard and is kept
-/// for the resend handoff; the server accepts any identifier format.
+/// for the resend and login handoffs; the server accepts any identifier
+/// format.
 @freezed
 abstract class ActivateFormInput with _$ActivateFormInput {
   const factory ActivateFormInput({

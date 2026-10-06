@@ -9,6 +9,7 @@ import 'package:ui_ux/features/auth/data/auth_handoff_store.dart';
 import 'package:ui_ux/features/auth/data/auth_repository.dart';
 import 'package:ui_ux/features/auth/data/dtos/register_request.dart';
 import 'package:ui_ux/features/auth/domain/models/auth_handoff.dart';
+import 'package:ui_ux/features/auth/domain/models/login_handoff.dart';
 import 'package:ui_ux/features/auth/domain/models/otp_purpose.dart';
 import 'package:ui_ux/shared/enums/business_type.dart';
 import 'package:ui_ux/shared/enums/login_type.dart';
@@ -30,6 +31,9 @@ void main() {
   final now = DateTime(2026, 10, 6, 9);
 
   setUpAll(() {
+    registerFallbackValue(
+      const LoginHandoff(loginType: LoginType.email, identifier: 'x'),
+    );
     registerFallbackValue(farmerRequest);
     registerFallbackValue(
       AuthHandoff(
@@ -46,6 +50,7 @@ void main() {
     useTallView(tester);
     repo = _MockAuthRepository();
     store = _MockHandoffStore();
+    when(() => store.saveLogin(any())).thenAnswer((_) async {});
     when(() => repo.register(any())).thenAnswer((_) async {});
     when(() => store.save(any())).thenAnswer((_) async {});
     when(

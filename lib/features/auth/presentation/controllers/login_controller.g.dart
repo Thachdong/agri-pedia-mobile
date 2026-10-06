@@ -10,19 +10,34 @@ part of 'login_controller.dart';
 // ignore_for_file: type=lint, type=warning
 /// Submits the login form. Success → tokens saved and [authStateProvider]
 /// becomes Authenticated with the returned profile (no extra /users/me);
-/// the router guard then leaves /auth/login (postLoginPath).
+/// the router guard then leaves /auth/login (postLoginPath). The login
+/// handoff is cleared.
+///
+/// USER_NOT_ACTIVE → saves the activate handoff (loginType, identifier,
+/// at = epoch) so the "kích hoạt" link opens /auth/activate prefilled with
+/// resend enabled (no code was just sent).
 
 @ProviderFor(LoginController)
 final loginControllerProvider = LoginControllerProvider._();
 
 /// Submits the login form. Success → tokens saved and [authStateProvider]
 /// becomes Authenticated with the returned profile (no extra /users/me);
-/// the router guard then leaves /auth/login (postLoginPath).
+/// the router guard then leaves /auth/login (postLoginPath). The login
+/// handoff is cleared.
+///
+/// USER_NOT_ACTIVE → saves the activate handoff (loginType, identifier,
+/// at = epoch) so the "kích hoạt" link opens /auth/activate prefilled with
+/// resend enabled (no code was just sent).
 final class LoginControllerProvider
     extends $AsyncNotifierProvider<LoginController, void> {
   /// Submits the login form. Success → tokens saved and [authStateProvider]
   /// becomes Authenticated with the returned profile (no extra /users/me);
-  /// the router guard then leaves /auth/login (postLoginPath).
+  /// the router guard then leaves /auth/login (postLoginPath). The login
+  /// handoff is cleared.
+  ///
+  /// USER_NOT_ACTIVE → saves the activate handoff (loginType, identifier,
+  /// at = epoch) so the "kích hoạt" link opens /auth/activate prefilled with
+  /// resend enabled (no code was just sent).
   LoginControllerProvider._()
     : super(
         from: null,
@@ -42,11 +57,16 @@ final class LoginControllerProvider
   LoginController create() => LoginController();
 }
 
-String _$loginControllerHash() => r'7c61acc1b21f22ec488b1c7ebae4fdb52ae29923';
+String _$loginControllerHash() => r'163bde5acdcfd63b31567df439f1c058e48f5e0b';
 
 /// Submits the login form. Success → tokens saved and [authStateProvider]
 /// becomes Authenticated with the returned profile (no extra /users/me);
-/// the router guard then leaves /auth/login (postLoginPath).
+/// the router guard then leaves /auth/login (postLoginPath). The login
+/// handoff is cleared.
+///
+/// USER_NOT_ACTIVE → saves the activate handoff (loginType, identifier,
+/// at = epoch) so the "kích hoạt" link opens /auth/activate prefilled with
+/// resend enabled (no code was just sent).
 
 abstract class _$LoginController extends $AsyncNotifier<void> {
   FutureOr<void> build();

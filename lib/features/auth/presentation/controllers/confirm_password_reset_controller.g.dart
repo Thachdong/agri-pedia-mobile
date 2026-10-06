@@ -11,6 +11,8 @@ part of 'confirm_password_reset_controller.dart';
 /// Submits the change-password form (ui-ux.md §5). Success → the
 /// RESET_PASSWORD handoff is cleared and [authHandoffProvider] for it
 /// invalidated; the password is replaced, the UI goes to /auth/login.
+/// The login handoff ([loginType] + identifier) is saved so /auth/login
+/// can prefill.
 
 @ProviderFor(ConfirmPasswordResetController)
 final confirmPasswordResetControllerProvider =
@@ -19,11 +21,15 @@ final confirmPasswordResetControllerProvider =
 /// Submits the change-password form (ui-ux.md §5). Success → the
 /// RESET_PASSWORD handoff is cleared and [authHandoffProvider] for it
 /// invalidated; the password is replaced, the UI goes to /auth/login.
+/// The login handoff ([loginType] + identifier) is saved so /auth/login
+/// can prefill.
 final class ConfirmPasswordResetControllerProvider
     extends $AsyncNotifierProvider<ConfirmPasswordResetController, void> {
   /// Submits the change-password form (ui-ux.md §5). Success → the
   /// RESET_PASSWORD handoff is cleared and [authHandoffProvider] for it
   /// invalidated; the password is replaced, the UI goes to /auth/login.
+  /// The login handoff ([loginType] + identifier) is saved so /auth/login
+  /// can prefill.
   ConfirmPasswordResetControllerProvider._()
     : super(
         from: null,
@@ -44,11 +50,13 @@ final class ConfirmPasswordResetControllerProvider
 }
 
 String _$confirmPasswordResetControllerHash() =>
-    r'51799977b6cd44a698e89df866cca1a5a38bc85b';
+    r'ba798c0335265f2f303367cd30ca01ce7e7523ad';
 
 /// Submits the change-password form (ui-ux.md §5). Success → the
 /// RESET_PASSWORD handoff is cleared and [authHandoffProvider] for it
 /// invalidated; the password is replaced, the UI goes to /auth/login.
+/// The login handoff ([loginType] + identifier) is saved so /auth/login
+/// can prefill.
 
 abstract class _$ConfirmPasswordResetController extends $AsyncNotifier<void> {
   FutureOr<void> build();

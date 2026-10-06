@@ -11,6 +11,8 @@ part of 'activate_controller.dart';
 /// Submits the activate form. Success → the activate handoff is cleared
 /// (ui-ux.md §2) and [authHandoffProvider] for it invalidated; the account is
 /// ACTIVE, the UI goes to /auth/login.
+/// The login handoff ([loginType] + identifier) is saved so /auth/login
+/// can prefill.
 
 @ProviderFor(ActivateController)
 final activateControllerProvider = ActivateControllerProvider._();
@@ -18,11 +20,15 @@ final activateControllerProvider = ActivateControllerProvider._();
 /// Submits the activate form. Success → the activate handoff is cleared
 /// (ui-ux.md §2) and [authHandoffProvider] for it invalidated; the account is
 /// ACTIVE, the UI goes to /auth/login.
+/// The login handoff ([loginType] + identifier) is saved so /auth/login
+/// can prefill.
 final class ActivateControllerProvider
     extends $AsyncNotifierProvider<ActivateController, void> {
   /// Submits the activate form. Success → the activate handoff is cleared
   /// (ui-ux.md §2) and [authHandoffProvider] for it invalidated; the account is
   /// ACTIVE, the UI goes to /auth/login.
+  /// The login handoff ([loginType] + identifier) is saved so /auth/login
+  /// can prefill.
   ActivateControllerProvider._()
     : super(
         from: null,
@@ -43,11 +49,13 @@ final class ActivateControllerProvider
 }
 
 String _$activateControllerHash() =>
-    r'6a524793ac0b553f90ad0b4aac448c25f49cf8d4';
+    r'93a50a1ecb051f267bf7fd8b920b762663d347f3';
 
 /// Submits the activate form. Success → the activate handoff is cleared
 /// (ui-ux.md §2) and [authHandoffProvider] for it invalidated; the account is
 /// ACTIVE, the UI goes to /auth/login.
+/// The login handoff ([loginType] + identifier) is saved so /auth/login
+/// can prefill.
 
 abstract class _$ActivateController extends $AsyncNotifier<void> {
   FutureOr<void> build();

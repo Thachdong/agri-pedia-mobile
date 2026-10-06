@@ -101,3 +101,47 @@ final class AuthHandoffFamily extends $Family
   @override
   String toString() => r'authHandoffProvider';
 }
+
+/// Account to prefill on /auth/login; null when absent. Read once on init.
+
+@ProviderFor(loginHandoff)
+final loginHandoffProvider = LoginHandoffProvider._();
+
+/// Account to prefill on /auth/login; null when absent. Read once on init.
+
+final class LoginHandoffProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<LoginHandoff?>,
+          LoginHandoff?,
+          FutureOr<LoginHandoff?>
+        >
+    with $FutureModifier<LoginHandoff?>, $FutureProvider<LoginHandoff?> {
+  /// Account to prefill on /auth/login; null when absent. Read once on init.
+  LoginHandoffProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'loginHandoffProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$loginHandoffHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<LoginHandoff?> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<LoginHandoff?> create(Ref ref) {
+    return loginHandoff(ref);
+  }
+}
+
+String _$loginHandoffHash() => r'de81c5f6c3432e491ab40d81d9b5be02ce61012f';
