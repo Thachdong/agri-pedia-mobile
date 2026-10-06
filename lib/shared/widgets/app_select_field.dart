@@ -51,7 +51,8 @@ class AppSelectField<T> extends StatelessWidget {
   /// False e.g. for ward until a province is chosen.
   final bool enabled;
 
-  bool get _isLoading => options == null && loadError == null;
+  /// A disabled field never spins (e.g. ward before a province is chosen).
+  bool get _isLoading => enabled && options == null && loadError == null;
 
   Future<void> _open(BuildContext context, FormFieldState<T> field) async {
     if (loadError != null) {
