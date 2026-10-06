@@ -1,0 +1,33 @@
+# Static analysis for ui_ux. Architecture rules that the analyzer can't express
+# live in ../.claude/scripts/arch_check.sh (see ../CLAUDE.md "Dependency rules").
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+  errors:
+    always_use_package_imports: error
+    avoid_relative_lib_imports: error
+  language:
+    strict-casts: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    always_use_package_imports: true
+    avoid_print: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_final_locals: true
+    unawaited_futures: true
+    use_build_context_synchronously: true
+    directives_ordering: true
+    sort_child_properties_last: true
