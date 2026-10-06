@@ -57,7 +57,7 @@ final class LoginControllerProvider
   LoginController create() => LoginController();
 }
 
-String _$loginControllerHash() => r'163bde5acdcfd63b31567df439f1c058e48f5e0b';
+String _$loginControllerHash() => r'c329b5dd239e3ea115f51841d76c625193c53747';
 
 /// Submits the login form. Success → tokens saved and [authStateProvider]
 /// becomes Authenticated with the returned profile (no extra /users/me);

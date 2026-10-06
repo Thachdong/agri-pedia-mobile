@@ -132,7 +132,7 @@ void main() {
     await tester.pumpAndSettle();
 
     verifyNever(() => store.save(any()));
-    expect(find.text('Đăng nhập'), findsWidgets);
+    expect(find.text('LOGIN'), findsOneWidget);
     expect(
       container.read(appRouterProvider).state.matchedLocation,
       Routes.login,
