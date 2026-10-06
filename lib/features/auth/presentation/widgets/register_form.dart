@@ -119,26 +119,22 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
         .submit(input.toRequest());
   }
 
-  void _onSuccess() {
-    final messenger = ScaffoldMessenger.of(context);
-    if (_role == UserRole.distributor) {
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Đăng ký thành công. Mã kích hoạt đã được gửi, vui lòng kích hoạt '
+  void _onSuccess(RegisterOutcome outcome) {
+    final (message, path) = switch (outcome) {
+      RegisterOutcome.needsActivation => (
+        'Đăng ký thành công. Mã kích hoạt đã được gửi, vui lòng kích hoạt '
             'tài khoản.',
-          ),
-        ),
-      );
-      context.go(Routes.activate);
-    } else {
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text('Đăng ký thành công. Vui lòng đăng nhập.'),
-        ),
-      );
-      context.go(Routes.login);
-    }
+        Routes.activate,
+      ),
+      RegisterOutcome.canLogin => (
+        'Đăng ký thành công. Vui lòng đăng nhập.',
+        Routes.login,
+      ),
+    };
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+    context.go(path);
   }
 
   void _onError(Object error) {
@@ -165,8 +161,8 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
       switch (next) {
         case AsyncError(:final error):
           _onError(error);
-        case AsyncData():
-          _onSuccess();
+        case AsyncData(:final value?):
+          _onSuccess(value);
         default:
       }
     });

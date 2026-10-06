@@ -11,37 +11,54 @@ import 'package:ui_ux/shared/enums/user_role.dart';
 
 part 'register_controller.g.dart';
 
-/// Submits the register form. Invalidates nothing: no cached data depends on
-/// a new, not-yet-logged-in account.
+/// What the UI does after a successful registration.
+enum RegisterOutcome {
+  /// DISTRIBUTOR: account PENDING, code sent → /auth/activate.
+  needsActivation,
+
+  /// FARMER: account ACTIVE → /auth/login.
+  canLogin,
+}
+
+/// Submits the register form. State: null until a submit succeeds, then the
+/// [RegisterOutcome]. Invalidates nothing: no cached data depends on a new,
+/// not-yet-logged-in account.
 ///
 /// DISTRIBUTOR success → saves the activate handoff (loginType, identifier,
 /// at = now) so /auth/activate can prefill and run the resend countdown.
 @riverpod
 class RegisterController extends _$RegisterController {
   @override
-  FutureOr<void> build() {}
+  FutureOr<RegisterOutcome?> build() => null;
 
-  /// True on success; on failure `state` holds the `ApiException`.
-  Future<bool> submit(RegisterRequest request) async {
+  /// The outcome on success; null on failure (`state` holds the
+  /// `ApiException`).
+  Future<RegisterOutcome?> submit(RegisterRequest request) async {
     final buildRef = ref; // `ref` returns the latest Ref after a rebuild
+    // Read dependencies before awaiting: the controller may be disposed
+    // while the request is in flight.
+    final repository = ref.read(authRepositoryProvider);
+    final handoffStore = ref.read(authHandoffStoreProvider);
+    final now = ref.read(clockProvider);
+
     state = const AsyncLoading();
     final result = await AsyncValue.guard(() async {
-      await ref.read(authRepositoryProvider).register(request);
-      if (request.role == UserRole.distributor) {
-        await ref
-            .read(authHandoffStoreProvider)
-            .save(
-              AuthHandoff(
-                loginType: request.loginType,
-                identifier: request.identifier,
-                at: ref.read(clockProvider)(),
-                purpose: OtpPurpose.activateDistributor,
-              ),
-            );
+      await repository.register(request);
+      if (request.role != UserRole.distributor) {
+        return RegisterOutcome.canLogin;
       }
+      await handoffStore.save(
+        AuthHandoff(
+          loginType: request.loginType,
+          identifier: request.identifier,
+          at: now(),
+          purpose: OtpPurpose.activateDistributor,
+        ),
+      );
+      return RegisterOutcome.needsActivation;
     });
-    if (!buildRef.mounted) return false;
+    if (!buildRef.mounted) return result.value;
     state = result;
-    return !state.hasError;
+    return result.value;
   }
 }

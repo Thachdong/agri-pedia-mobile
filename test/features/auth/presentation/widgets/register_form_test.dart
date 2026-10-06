@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ui_ux/core/network/api_exception.dart';
+import 'package:ui_ux/features/auth/data/auth_handoff_store.dart';
 import 'package:ui_ux/features/auth/data/auth_repository.dart';
 import 'package:ui_ux/features/auth/data/dtos/register_request.dart';
 import 'package:ui_ux/features/auth/presentation/widgets/register_form.dart';
@@ -15,6 +16,8 @@ import '../../../../helpers/pump_app.dart';
 import '../../../../helpers/register_form_driver.dart';
 
 class _MockAuthRepository extends Mock implements AuthRepository {}
+
+class _MockHandoffStore extends Mock implements AuthHandoffStore {}
 
 void main() {
   late _MockAuthRepository repo;
@@ -29,6 +32,7 @@ void main() {
       const SingleChildScrollView(child: RegisterForm()),
       overrides: [
         authRepositoryProvider.overrideWithValue(repo),
+        authHandoffStoreProvider.overrideWithValue(_MockHandoffStore()),
         ...locationOverrides,
       ],
     );

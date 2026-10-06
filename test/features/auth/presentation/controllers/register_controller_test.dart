@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -51,24 +53,30 @@ void main() {
   RegisterController notifier() =>
       container.read(registerControllerProvider.notifier);
 
-  test('FARMER success → true, data state, no handoff', () async {
+  test('FARMER success → canLogin, no handoff', () async {
     when(() => repo.register(any())).thenAnswer((_) async {});
     final sub = container.listen(registerControllerProvider, (_, _) {});
     addTearDown(sub.close);
 
-    expect(await notifier().submit(farmerRequest), isTrue);
+    expect(await notifier().submit(farmerRequest), RegisterOutcome.canLogin);
 
-    expect(container.read(registerControllerProvider), isA<AsyncData<void>>());
+    expect(
+      container.read(registerControllerProvider).value,
+      RegisterOutcome.canLogin,
+    );
     verify(() => repo.register(farmerRequest)).called(1);
     verifyNever(() => store.save(any()));
   });
 
-  test('DISTRIBUTOR success → activate handoff with at = clock', () async {
+  test('DISTRIBUTOR success → needsActivation + handoff at = clock', () async {
     when(() => repo.register(any())).thenAnswer((_) async {});
     final sub = container.listen(registerControllerProvider, (_, _) {});
     addTearDown(sub.close);
 
-    expect(await notifier().submit(distributorRequest), isTrue);
+    expect(
+      await notifier().submit(distributorRequest),
+      RegisterOutcome.needsActivation,
+    );
 
     verify(
       () => store.save(
@@ -82,7 +90,7 @@ void main() {
     ).called(1);
   });
 
-  test('server error → false, AsyncError with the code, no handoff', () async {
+  test('server error → null, AsyncError with the code, no handoff', () async {
     when(() => repo.register(any())).thenThrow(
       const ApiException(
         statusCode: 409,
@@ -93,7 +101,7 @@ void main() {
     final sub = container.listen(registerControllerProvider, (_, _) {});
     addTearDown(sub.close);
 
-    expect(await notifier().submit(distributorRequest), isFalse);
+    expect(await notifier().submit(distributorRequest), isNull);
 
     final state = container.read(registerControllerProvider);
     expect(
@@ -105,6 +113,30 @@ void main() {
       ),
     );
     verifyNever(() => store.save(any()));
+  });
+
+  test('handoff save fails → error, not needsActivation', () async {
+    when(() => repo.register(any())).thenAnswer((_) async {});
+    when(() => store.save(any())).thenThrow(StateError('disk full'));
+    final sub = container.listen(registerControllerProvider, (_, _) {});
+    addTearDown(sub.close);
+
+    expect(await notifier().submit(distributorRequest), isNull);
+    expect(container.read(registerControllerProvider).hasError, isTrue);
+  });
+
+  test('controller disposed mid-request → handoff still saved', () async {
+    final pending = Completer<void>();
+    when(() => repo.register(any())).thenAnswer((_) => pending.future);
+    final sub = container.listen(registerControllerProvider, (_, _) {});
+
+    final future = notifier().submit(distributorRequest);
+    sub.close(); // auto-dispose: nobody listens anymore
+    await Future<void>.delayed(Duration.zero);
+    pending.complete();
+
+    expect(await future, RegisterOutcome.needsActivation);
+    verify(() => store.save(any())).called(1);
   });
 
   test('loading while the request is in flight', () async {
