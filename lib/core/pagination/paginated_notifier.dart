@@ -74,22 +74,29 @@ mixin PaginatedNotifier<T>
     if (state.isLoading || current == null) return;
     if (!current.hasMore || current.isLoadingMore) return;
 
+    // The notifier instance survives rebuilds and `ref` always returns the
+    // latest Ref, so capture this build's Ref: after a refresh() it is no
+    // longer mounted and the stale page must be dropped.
+    final buildRef = ref;
     state = AsyncData(
       current.copyWith(isLoadingMore: true, clearLoadMoreError: true),
     );
     try {
       final page = await fetchPage(current.nextCursor);
-      if (!ref.mounted) return;
+      if (!buildRef.mounted) return;
+      // Append to the latest items: updateItems may have run meanwhile.
+      final latest = state.value ?? current;
       state = AsyncData(
         PaginatedState(
-          items: [...current.items, ...page.items],
+          items: [...latest.items, ...page.items],
           nextCursor: page.nextCursor,
         ),
       );
     } catch (e) {
-      if (!ref.mounted) return;
+      if (!buildRef.mounted) return;
+      final latest = state.value ?? current;
       state = AsyncData(
-        current.copyWith(isLoadingMore: false, loadMoreError: e),
+        latest.copyWith(isLoadingMore: false, loadMoreError: e),
       );
     }
   }

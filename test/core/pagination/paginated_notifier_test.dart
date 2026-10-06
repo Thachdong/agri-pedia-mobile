@@ -136,6 +136,49 @@ void main() {
     expect(state.nextCursor, 'c2');
   });
 
+  test('loadMore finishing after refresh is dropped', () async {
+    final slow = Completer<CursorPage<int>>();
+    var builds = 0;
+    cursors = [];
+    provider = AsyncNotifierProvider<_Pages, PaginatedState<int>>(
+      () => _Pages((cursor) async {
+        if (cursor != null) return slow.future;
+        builds++;
+        return CursorPage(items: [builds * 10], nextCursor: 'c2');
+      }),
+    );
+    final c = makeContainer();
+    c.listen(provider, (_, _) {});
+    await c.read(provider.future);
+
+    final more = c.read(provider.notifier).loadMore();
+    c.read(provider.notifier).refresh();
+    await c.read(provider.future);
+    slow.complete(const CursorPage(items: [99]));
+    await more;
+
+    final state = c.read(provider).requireValue;
+    expect(state.items, [20]);
+    expect(state.nextCursor, 'c2');
+  });
+
+  test('updateItems during loadMore is kept', () async {
+    final next = Completer<CursorPage<int>>();
+    final c = setUp({
+      null: const CursorPage(items: [1], nextCursor: 'c2'),
+      'c2': next,
+    });
+    await c.read(provider.future);
+    final notifier = c.read(provider.notifier);
+
+    final more = notifier.loadMore();
+    notifier.updateItems((items) => [0, ...items]);
+    next.complete(const CursorPage(items: [2]));
+    await more;
+
+    expect(c.read(provider).requireValue.items, [0, 1, 2]);
+  });
+
   test('refresh reloads from the first page', () async {
     final c = setUp({
       null: const CursorPage(items: [1], nextCursor: 'c2'),
