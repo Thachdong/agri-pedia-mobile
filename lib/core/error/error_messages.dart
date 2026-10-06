@@ -46,6 +46,12 @@ const _messages = <String, String>{
   'USER_BUSINESS_TYPE_REQUIRED': 'Vui lòng chọn loại hình kinh doanh.',
   'USER_BUSINESS_TYPE_NOT_ALLOWED':
       'Nông dân không cần chọn loại hình kinh doanh.',
+  // OTP (activate, resend, change-password)
+  'OTP_INVALID_CODE': 'Mã xác thực không đúng.',
+  'OTP_NOT_FOUND': 'Không tìm thấy mã xác thực cho tài khoản này.',
+  'OTP_ALREADY_CONSUMED': 'Mã xác thực đã được sử dụng.',
+  'OTP_EXPIRED': 'Mã xác thực đã hết hạn. Vui lòng gửi lại mã mới.',
+  'OTP_BLOCKED': 'Bạn đã thử quá nhiều lần. Vui lòng thử lại sau.',
   // Location
   'LOCATION_PROVINCE_NOT_FOUND': 'Không tìm thấy tỉnh/thành phố.',
 };
