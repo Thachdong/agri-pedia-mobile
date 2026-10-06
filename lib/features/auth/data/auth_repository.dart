@@ -1,12 +1,16 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ui_ux/core/network/api_client.dart';
 import 'package:ui_ux/core/network/api_exception.dart';
+import 'package:ui_ux/core/storage/token_storage.dart';
 import 'package:ui_ux/features/auth/data/auth_api.dart';
+import 'package:ui_ux/features/auth/data/auth_session_repository.dart';
 import 'package:ui_ux/features/auth/data/dtos/activate_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/confirm_password_reset_request.dart';
+import 'package:ui_ux/features/auth/data/dtos/login_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/register_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/request_password_reset_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/resend_code_request.dart';
+import 'package:ui_ux/features/auth/domain/models/current_user.dart';
 
 part 'auth_repository.g.dart';
 
@@ -46,6 +50,22 @@ class AuthRepository {
       final issuedAt = e.details?['issuedAt'];
       return issuedAt is String ? DateTime.tryParse(issuedAt) : null;
     }
+  }
+
+  /// Logs in. Unknown identifier, login type mismatch and wrong password are
+  /// all USER_INVALID_CREDENTIALS; USER_NOT_ACTIVE (DISTRIBUTOR not
+  /// activated) only once the password matched.
+  Future<({TokenPair tokens, CurrentUser user})> login(
+    LoginRequest request,
+  ) async {
+    final dto = await _api.login(request);
+    return (
+      tokens: TokenPair(
+        accessToken: dto.accessToken,
+        refreshToken: dto.refreshToken,
+      ),
+      user: currentUserFromDto(dto.user),
+    );
   }
 
   /// Replaces the password with the latest RESET_PASSWORD code and logs the

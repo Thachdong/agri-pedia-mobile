@@ -51,6 +51,9 @@ const _messages = <String, String>{
       'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
   'USER_INVALID_REFRESH_TOKEN':
       'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+  // Login
+  'USER_INVALID_CREDENTIALS': 'Email/số điện thoại hoặc mật khẩu không đúng.',
+  'USER_NOT_ACTIVE': 'Tài khoản chưa được kích hoạt.',
   // Register
   'USER_IDENTIFIER_ALREADY_USED':
       'Email/số điện thoại này đã được dùng để đăng ký.',
