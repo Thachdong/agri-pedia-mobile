@@ -3,6 +3,7 @@ import 'package:ui_ux/core/network/api_client.dart';
 import 'package:ui_ux/core/network/api_exception.dart';
 import 'package:ui_ux/features/auth/data/auth_api.dart';
 import 'package:ui_ux/features/auth/data/dtos/activate_request.dart';
+import 'package:ui_ux/features/auth/data/dtos/confirm_password_reset_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/register_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/request_password_reset_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/resend_code_request.dart';
@@ -46,6 +47,12 @@ class AuthRepository {
       return issuedAt is String ? DateTime.tryParse(issuedAt) : null;
     }
   }
+
+  /// Replaces the password with the latest RESET_PASSWORD code and logs the
+  /// user out everywhere (refresh tokens revoked). Wrong codes are counted
+  /// server side (too many → OTP_BLOCKED).
+  Future<void> confirmPasswordReset(ConfirmPasswordResetRequest request) =>
+      _api.confirmPasswordReset(request);
 }
 
 @Riverpod(keepAlive: true)

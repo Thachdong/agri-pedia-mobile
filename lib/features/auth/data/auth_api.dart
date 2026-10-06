@@ -1,5 +1,6 @@
 import 'package:ui_ux/core/network/api_client.dart';
 import 'package:ui_ux/features/auth/data/dtos/activate_request.dart';
+import 'package:ui_ux/features/auth/data/dtos/confirm_password_reset_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/register_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/request_password_reset_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/resend_code_request.dart';
@@ -24,4 +25,8 @@ class AuthApi {
   /// POST /auth/reset-password — 200, empty body.
   Future<void> requestPasswordReset(RequestPasswordResetRequest body) =>
       _client.post<void>('/auth/reset-password', body: body.toJson());
+
+  /// POST /auth/reset-password/confirm — 200, empty body.
+  Future<void> confirmPasswordReset(ConfirmPasswordResetRequest body) =>
+      _client.post<void>('/auth/reset-password/confirm', body: body.toJson());
 }
