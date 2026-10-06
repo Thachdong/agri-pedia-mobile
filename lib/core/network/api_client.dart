@@ -3,7 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ui_ux/core/config/env.dart';
 import 'package:ui_ux/core/network/api_exception.dart';
+import 'package:ui_ux/core/network/auth_interceptor.dart';
 import 'package:ui_ux/core/network/debug_log_interceptor.dart';
+import 'package:ui_ux/core/network/session_events.dart';
+import 'package:ui_ux/core/storage/token_storage.dart';
 
 part 'api_client.g.dart';
 
@@ -134,20 +137,35 @@ class ApiClient {
   }
 }
 
-/// Configured dio instance. Interceptors (auth) are added here.
+/// Configured dio instance with the auth interceptor. Token refresh goes
+/// through a second bare dio so it never re-enters [AuthInterceptor].
 @Riverpod(keepAlive: true)
 Dio dioClient(Ref ref) {
-  final dio = Dio(
-    BaseOptions(
-      baseUrl: Env.apiUrl,
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 15),
-      contentType: Headers.jsonContentType,
-      responseType: ResponseType.json,
+  final options = BaseOptions(
+    baseUrl: Env.apiUrl,
+    connectTimeout: const Duration(seconds: 15),
+    receiveTimeout: const Duration(seconds: 15),
+    contentType: Headers.jsonContentType,
+    responseType: ResponseType.json,
+  );
+  final dio = Dio(options);
+  final refreshDio = Dio(options);
+  dio.interceptors.add(
+    AuthInterceptor(
+      tokens: ref.watch(tokenStorageProvider),
+      refresh: refreshTokensWith(refreshDio),
+      retry: dio.fetch,
+      onSessionExpired: ref.watch(sessionEventsProvider).notifyExpired,
     ),
   );
-  if (kDebugMode) dio.interceptors.add(DebugLogInterceptor());
-  ref.onDispose(dio.close);
+  if (kDebugMode) {
+    dio.interceptors.add(DebugLogInterceptor());
+    refreshDio.interceptors.add(DebugLogInterceptor());
+  }
+  ref.onDispose(() {
+    dio.close();
+    refreshDio.close();
+  });
   return dio;
 }
 

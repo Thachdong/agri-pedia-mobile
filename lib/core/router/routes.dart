@@ -1,4 +1,5 @@
 /// Route paths (specs/ui-ux/ui-ux.md). Navigate with these, never literals.
+/// In core (pure constants) so features can use them; GoRoutes live in app/.
 abstract final class Routes {
   static const home = '/';
 
@@ -14,4 +15,6 @@ abstract final class Routes {
   /// Routes that need login; the auth redirect (mb-auth-session) guards them.
   /// Spec pages so far are all public.
   static const privatePrefixes = <String>[];
+
+  static bool isPrivate(String path) => privatePrefixes.any(path.startsWith);
 }

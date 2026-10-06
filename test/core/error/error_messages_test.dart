@@ -26,4 +26,35 @@ void main() {
     expect(errorMessageOf(StateError('x')), contains('Đã có lỗi xảy ra'));
     expect(errorMessageOf(null), contains('Đã có lỗi xảy ra'));
   });
+
+  group('OTP_BLOCKED', () {
+    test('with details.blockUntil → local HH:mm', () {
+      final until = DateTime(2026, 10, 6, 9, 5);
+      final error = ApiException(
+        code: 'OTP_BLOCKED',
+        message: 'blocked',
+        statusCode: 422,
+        details: {'blockUntil': until.toUtc().toIso8601String()},
+      );
+      expect(
+        errorMessageOf(error),
+        'Bạn đã thử quá nhiều lần. Vui lòng thử lại sau 09:05.',
+      );
+    });
+
+    test('without / invalid blockUntil → generic blocked text', () {
+      const generic = 'Bạn đã thử quá nhiều lần. Vui lòng thử lại sau.';
+      expect(errorMessageOf(_e('OTP_BLOCKED', 422)), generic);
+      expect(
+        errorMessageOf(
+          const ApiException(
+            code: 'OTP_BLOCKED',
+            message: 'blocked',
+            details: {'blockUntil': 'not a date'},
+          ),
+        ),
+        generic,
+      );
+    });
+  });
 }

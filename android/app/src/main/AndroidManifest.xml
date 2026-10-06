@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- API calls + OSM map tiles. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- "Dùng vị trí hiện tại" when picking an address (geolocator). -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:label="ui_ux"
         android:name="${applicationName}"

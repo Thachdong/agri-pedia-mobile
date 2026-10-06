@@ -7,10 +7,24 @@ import 'package:ui_ux/core/network/api_exception.dart';
 /// Server `message` is developer text (English) and is not shown.
 String errorMessageOf(Object? error) {
   if (error is ApiException) {
+    if (_blockedUntil(error) case final until?) {
+      return 'Bạn đã thử quá nhiều lần. Vui lòng thử lại sau ${_hhmm(until)}.';
+    }
     return _messages[error.code] ?? _byStatus(error.statusCode) ?? _generic;
   }
   return _generic;
 }
+
+/// `OTP_BLOCKED` may carry `details.blockUntil` (ISO date), shown in local
+/// time.
+DateTime? _blockedUntil(ApiException error) {
+  if (error.code != 'OTP_BLOCKED') return null;
+  final raw = error.details?['blockUntil'];
+  return raw is String ? DateTime.tryParse(raw)?.toLocal() : null;
+}
+
+String _hhmm(DateTime t) =>
+    '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
 const _generic = 'Đã có lỗi xảy ra. Vui lòng thử lại.';
 
@@ -37,4 +51,29 @@ const _messages = <String, String>{
       'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
   'USER_INVALID_REFRESH_TOKEN':
       'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+  // Login
+  'USER_INVALID_CREDENTIALS': 'Email/số điện thoại hoặc mật khẩu không đúng.',
+  'USER_NOT_ACTIVE': 'Tài khoản chưa được kích hoạt.',
+  // Register
+  'USER_IDENTIFIER_ALREADY_USED':
+      'Email/số điện thoại này đã được dùng để đăng ký.',
+  'USER_INVALID_COORDINATES': 'Toạ độ không hợp lệ. Vui lòng chọn lại vị trí.',
+  'USER_LOCATION_INVALID':
+      'Tỉnh/thành phố hoặc phường/xã không hợp lệ. Vui lòng chọn lại.',
+  'USER_BUSINESS_TYPE_REQUIRED': 'Vui lòng chọn loại hình kinh doanh.',
+  'USER_BUSINESS_TYPE_NOT_ALLOWED':
+      'Nông dân không cần chọn loại hình kinh doanh.',
+  // OTP (activate, resend, reset-password, change-password)
+  'OTP_ACCOUNT_NOT_FOUND':
+      'Không tìm thấy tài khoản với email/số điện thoại này.',
+  'OTP_ACCOUNT_NOT_ACTIVE': 'Tài khoản chưa được kích hoạt.',
+  'OTP_ALREADY_REQUESTED':
+      'Mã xác thực đã được gửi và vẫn còn hiệu lực. Vui lòng kiểm tra lại.',
+  'OTP_INVALID_CODE': 'Mã xác thực không đúng.',
+  'OTP_NOT_FOUND': 'Không tìm thấy mã xác thực cho tài khoản này.',
+  'OTP_ALREADY_CONSUMED': 'Mã xác thực đã được sử dụng.',
+  'OTP_EXPIRED': 'Mã xác thực đã hết hạn. Vui lòng gửi lại mã mới.',
+  'OTP_BLOCKED': 'Bạn đã thử quá nhiều lần. Vui lòng thử lại sau.',
+  // Location
+  'LOCATION_PROVINCE_NOT_FOUND': 'Không tìm thấy tỉnh/thành phố.',
 };

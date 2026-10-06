@@ -8,16 +8,19 @@ part of 'api_client.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Configured dio instance. Interceptors (auth) are added here.
+/// Configured dio instance with the auth interceptor. Token refresh goes
+/// through a second bare dio so it never re-enters [AuthInterceptor].
 
 @ProviderFor(dioClient)
 final dioClientProvider = DioClientProvider._();
 
-/// Configured dio instance. Interceptors (auth) are added here.
+/// Configured dio instance with the auth interceptor. Token refresh goes
+/// through a second bare dio so it never re-enters [AuthInterceptor].
 
 final class DioClientProvider extends $FunctionalProvider<Dio, Dio, Dio>
     with $Provider<Dio> {
-  /// Configured dio instance. Interceptors (auth) are added here.
+  /// Configured dio instance with the auth interceptor. Token refresh goes
+  /// through a second bare dio so it never re-enters [AuthInterceptor].
   DioClientProvider._()
     : super(
         from: null,
@@ -51,7 +54,7 @@ final class DioClientProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$dioClientHash() => r'b7c96d238a4627a85a86d8dfea7e0e52e05966bc';
+String _$dioClientHash() => r'a8438b13b1276a0514d803d132a8aa155818275b';
 
 @ProviderFor(apiClient)
 final apiClientProvider = ApiClientProvider._();
