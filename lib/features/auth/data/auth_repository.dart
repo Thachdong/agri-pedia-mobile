@@ -3,6 +3,7 @@ import 'package:ui_ux/core/network/api_client.dart';
 import 'package:ui_ux/features/auth/data/auth_api.dart';
 import 'package:ui_ux/features/auth/data/dtos/activate_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/register_request.dart';
+import 'package:ui_ux/features/auth/data/dtos/resend_code_request.dart';
 
 part 'auth_repository.g.dart';
 
@@ -18,6 +19,12 @@ class AuthRepository {
   /// Activates a PENDING DISTRIBUTOR with its ACTIVATE_DISTRIBUTOR code.
   /// Wrong codes are counted server side (too many → OTP_BLOCKED).
   Future<void> activate(ActivateRequest request) => _api.activate(request);
+
+  /// Sends the latest code of `purpose` again while valid, or issues a new
+  /// one if it expired. Resends are counted (too many → OTP_BLOCKED with
+  /// `details.blockUntil`).
+  Future<void> resendCode(ResendCodeRequest request) =>
+      _api.resendCode(request);
 }
 
 @Riverpod(keepAlive: true)
