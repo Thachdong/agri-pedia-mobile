@@ -7,9 +7,7 @@ import 'package:ui_ux/core/network/api_exception.dart';
 /// Server `message` is developer text (English) and is not shown.
 String errorMessageOf(Object? error) {
   if (error is ApiException) {
-    return _messages[error.code] ??
-        _byStatus(error.statusCode) ??
-        _generic;
+    return _messages[error.code] ?? _byStatus(error.statusCode) ?? _generic;
   }
   return _generic;
 }
@@ -33,8 +31,7 @@ const _messages = <String, String>{
       'Không có kết nối mạng. Vui lòng kiểm tra và thử lại.',
   ApiException.timeout: 'Kết nối quá chậm. Vui lòng thử lại.',
   ApiException.invalidResponse: 'Dữ liệu trả về không hợp lệ.',
-  ApiException.validationFailed:
-      'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.',
+  ApiException.validationFailed: 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.',
   // Session
   'AUTH_INVALID_ACCESS_TOKEN':
       'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',

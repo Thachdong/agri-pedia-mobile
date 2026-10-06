@@ -146,8 +146,6 @@ ThemeData buildAppTheme() {
       contentTextStyle: text.bodyMedium?.copyWith(color: scheme.surface),
       shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
     ),
-    progressIndicatorTheme: ProgressIndicatorThemeData(
-      color: scheme.primary,
-    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(color: scheme.primary),
   );
 }

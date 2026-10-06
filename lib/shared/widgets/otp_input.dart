@@ -48,7 +48,8 @@ class _OtpInputState extends State<OtpInput> {
 
   TextEditingController get _controller =>
       widget.controller ?? (_ownController ??= TextEditingController());
-  FocusNode get _focusNode => widget.focusNode ?? (_ownFocusNode ??= FocusNode());
+  FocusNode get _focusNode =>
+      widget.focusNode ?? (_ownFocusNode ??= FocusNode());
 
   @override
   void initState() {

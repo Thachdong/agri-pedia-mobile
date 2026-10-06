@@ -95,10 +95,12 @@ class ApiClient {
   }
 
   static Map<String, Object?>? _withoutNulls(Map<String, Object?>? query) =>
-      query == null ? null : {
-        for (final e in query.entries)
-          if (e.value != null) e.key: e.value,
-      };
+      query == null
+      ? null
+      : {
+          for (final e in query.entries)
+            if (e.value != null) e.key: e.value,
+        };
 
   static ApiException _fromDio(DioException e) {
     final response = e.response;

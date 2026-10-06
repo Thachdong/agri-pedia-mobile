@@ -55,8 +55,8 @@ abstract final class Validators {
     return null;
   };
 
-  static Validator maxLength(int max, [String? message]) => (v) =>
-      (v != null && v.trim().length > max)
+  static Validator maxLength(int max, [String? message]) =>
+      (v) => (v != null && v.trim().length > max)
       ? (message ?? 'Tối đa $max ký tự')
       : null;
 

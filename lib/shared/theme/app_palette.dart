@@ -11,9 +11,13 @@ abstract final class AppPalette {
   static const textHighlight = Color(0xFFC86D4B); // --palette-text-highlight
   static const btnMain = Color(0xFF1E4D3B); // --palette-btn-main
   static const borderSubtle = Color(0xFFE1EADF); // --palette-border-subtle
-  static const bgHighlightSubtle = Color(0xFFFFF4F0); // --palette-bg-highlight-subtle
+  static const bgHighlightSubtle = Color(
+    0xFFFFF4F0,
+  ); // --palette-bg-highlight-subtle
   static const ratingStar = Color(0xFFB7791F); // --palette-rating-star
-  static const ratingStarEmpty = Color(0xFFA9B8AF); // --palette-rating-star-empty
+  static const ratingStarEmpty = Color(
+    0xFFA9B8AF,
+  ); // --palette-rating-star-empty
 
   /// --destructive: oklch(0.577 0.245 27.325)
   static const destructive = Color(0xFFE7000B);
