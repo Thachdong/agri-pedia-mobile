@@ -128,9 +128,9 @@ class _ActivateFormState extends ConsumerState<ActivateForm> {
 
   /// Only the identifier is needed to resend; the code may be empty.
   Future<void> _resend() async {
-    final identifierError = AuthValidators.identifier(
-      _loginType,
-    )(_identifier.text);
+    final identifierError = AuthValidators.identifier(_loginType)(
+      _identifier.text,
+    );
     setState(() {
       _clearServerErrors();
       _identifierError = identifierError;
@@ -155,9 +155,9 @@ class _ActivateFormState extends ConsumerState<ActivateForm> {
   }
 
   void _onResent() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã gửi lại mã kích hoạt.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Đã gửi lại mã kích hoạt.')));
     _code.clear();
     _codeFocus.requestFocus();
   }

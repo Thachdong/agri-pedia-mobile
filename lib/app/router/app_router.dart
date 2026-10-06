@@ -17,7 +17,7 @@ GoRouter appRouter(Ref ref) {
         path: Routes.home,
         builder: (context, state) => const _PlaceholderPage(
           title: 'AgriPedia',
-          links: {'Đăng ký': Routes.register},
+          links: {'Đăng ký': Routes.register, 'Kích hoạt': Routes.activate},
           showHomeLink: false,
         ),
       ),
@@ -25,11 +25,9 @@ GoRouter appRouter(Ref ref) {
         path: Routes.register,
         builder: (context, state) => const RegisterPage(),
       ),
-      // TODO(auth-activate): replace with ActivatePage.
       GoRoute(
         path: Routes.activate,
-        builder: (context, state) =>
-            const _PlaceholderPage(title: 'Kích hoạt tài khoản'),
+        builder: (context, state) => const ActivatePage(),
       ),
       // TODO(auth-login): replace with LoginPage.
       GoRoute(
