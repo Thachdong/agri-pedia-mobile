@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:ui_ux/app/router/routes.dart';
+import 'package:ui_ux/core/router/routes.dart';
 
 part 'app_router.g.dart';
 

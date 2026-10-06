@@ -1,4 +1,5 @@
 /// Route paths (specs/ui-ux/ui-ux.md). Navigate with these, never literals.
+/// In core (pure constants) so features can use them; GoRoutes live in app/.
 abstract final class Routes {
   static const home = '/';
 
