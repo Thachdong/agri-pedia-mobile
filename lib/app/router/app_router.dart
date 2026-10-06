@@ -34,6 +34,16 @@ GoRouter appRouter(Ref ref) {
         path: Routes.login,
         builder: (context, state) => const _PlaceholderPage(title: 'Đăng nhập'),
       ),
+      GoRoute(
+        path: Routes.resetPassword,
+        builder: (context, state) => const ResetPasswordPage(),
+      ),
+      // TODO(auth-change-password): replace with ChangePasswordPage.
+      GoRoute(
+        path: Routes.changePassword,
+        builder: (context, state) =>
+            const _PlaceholderPage(title: 'Đổi mật khẩu'),
+      ),
     ],
   );
   ref.onDispose(router.dispose);
