@@ -72,7 +72,8 @@ class AppSelectField<T> extends StatelessWidget {
         searchable: searchable,
       ),
     );
-    if (picked == null) return;
+    // Field gone while the sheet was open (e.g. route changed).
+    if (picked == null || !field.mounted) return;
     field.didChange(picked.value);
     if (picked.value != value) onChanged(picked.value);
   }

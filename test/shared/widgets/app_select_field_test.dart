@@ -138,4 +138,39 @@ void main() {
     expect(retries, 1);
     expect(find.byType(BottomSheet), findsNothing);
   });
+
+  testWidgets('field disposed while the sheet is open → no crash', (
+    tester,
+  ) async {
+    var showField = true;
+    late StateSetter setOuter;
+    String? picked;
+    await tester.pumpApp(
+      StatefulBuilder(
+        builder: (context, setState) {
+          setOuter = setState;
+          return showField
+              ? AppSelectField<String>(
+                  label: 'Tỉnh/thành phố',
+                  hint: 'Chọn tỉnh',
+                  value: null,
+                  options: _provinces,
+                  itemLabel: (o) => o,
+                  onChanged: (v) => picked = v,
+                )
+              : const SizedBox.shrink();
+        },
+      ),
+    );
+
+    await tester.tap(find.text('Chọn tỉnh'), warnIfMissed: false);
+    await tester.pumpAndSettle();
+    setOuter(() => showField = false);
+    await tester.pump();
+    await tester.tap(find.text('Hà Nội'));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(picked, isNull);
+  });
 }

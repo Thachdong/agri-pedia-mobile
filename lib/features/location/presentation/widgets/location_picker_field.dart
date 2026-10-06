@@ -35,7 +35,8 @@ class LocationPickerField extends StatelessWidget {
     FormFieldState<GeoPoint> field,
   ) async {
     final picked = await showLocationPickerSheet(context, initial: value);
-    if (picked == null) return;
+    // Field gone while the sheet was open (e.g. route changed).
+    if (picked == null || !field.mounted) return;
     field.didChange(picked);
     if (picked != value) onChanged(picked);
   }
