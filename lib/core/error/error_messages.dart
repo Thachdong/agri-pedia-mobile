@@ -37,6 +37,15 @@ const _messages = <String, String>{
       'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
   'USER_INVALID_REFRESH_TOKEN':
       'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+  // Register
+  'USER_IDENTIFIER_ALREADY_USED':
+      'Email/số điện thoại này đã được dùng để đăng ký.',
+  'USER_INVALID_COORDINATES': 'Toạ độ không hợp lệ. Vui lòng chọn lại vị trí.',
+  'USER_LOCATION_INVALID':
+      'Tỉnh/thành phố hoặc phường/xã không hợp lệ. Vui lòng chọn lại.',
+  'USER_BUSINESS_TYPE_REQUIRED': 'Vui lòng chọn loại hình kinh doanh.',
+  'USER_BUSINESS_TYPE_NOT_ALLOWED':
+      'Nông dân không cần chọn loại hình kinh doanh.',
   // Location
   'LOCATION_PROVINCE_NOT_FOUND': 'Không tìm thấy tỉnh/thành phố.',
 };
