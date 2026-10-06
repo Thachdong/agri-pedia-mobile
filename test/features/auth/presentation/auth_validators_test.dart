@@ -80,4 +80,13 @@ void main() {
       expect(AuthValidators.otpCode(bad), message, reason: bad);
     }
   });
+
+  test('loginPassword: required, max 128, no strength rule', () {
+    expect(AuthValidators.loginPassword(''), 'Vui lòng nhập mật khẩu');
+    expect(AuthValidators.loginPassword(null), 'Vui lòng nhập mật khẩu');
+    expect(AuthValidators.loginPassword('a'), isNull);
+    expect(AuthValidators.loginPassword('1234567'), isNull);
+    expect(AuthValidators.loginPassword('a' * 128), isNull);
+    expect(AuthValidators.loginPassword('a' * 129), isNotNull);
+  });
 }

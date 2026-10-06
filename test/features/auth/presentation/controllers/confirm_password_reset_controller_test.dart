@@ -87,6 +87,14 @@ void main() {
 
     verify(() => repo.confirmPasswordReset(request)).called(1);
     verify(() => store.clear(purpose)).called(1);
+    verify(
+      () => store.saveLogin(
+        LoginHandoff(
+          loginType: LoginType.email,
+          identifier: request.identifier,
+        ),
+      ),
+    ).called(1);
     expect(
       container.read(confirmPasswordResetControllerProvider).hasError,
       isFalse,
@@ -114,5 +122,6 @@ void main() {
       isA<ApiException>().having((e) => e.code, 'code', 'OTP_EXPIRED'),
     );
     verifyNever(() => store.clear(any()));
+    verifyNever(() => store.saveLogin(any()));
   });
 }

@@ -5,6 +5,7 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 import 'package:ui_ux/core/storage/key_value_storage.dart';
 import 'package:ui_ux/features/auth/data/auth_handoff_store.dart';
 import 'package:ui_ux/features/auth/domain/models/auth_handoff.dart';
+import 'package:ui_ux/features/auth/domain/models/login_handoff.dart';
 import 'package:ui_ux/features/auth/domain/models/otp_purpose.dart';
 import 'package:ui_ux/shared/enums/login_type.dart';
 
@@ -72,5 +73,38 @@ void main() {
       await prefs.getString('agripedia.auth_handoff.ACTIVATE_DISTRIBUTOR'),
       isNull,
     );
+  });
+
+  group('login handoff', () {
+    const login = LoginHandoff(
+      loginType: LoginType.phone,
+      identifier: '0901234567',
+    );
+
+    test('saveLogin → readLogin; own key, independent of OTP ones', () async {
+      await store.save(activate);
+      await store.saveLogin(login);
+
+      expect(await store.readLogin(), login);
+      expect(await prefs.getString('agripedia.auth_handoff.LOGIN'), isNotNull);
+
+      await store.clearLogin();
+      expect(await store.readLogin(), isNull);
+      expect(await store.read(OtpPurpose.activateDistributor), activate);
+    });
+
+    test('absent → null', () async {
+      expect(await store.readLogin(), isNull);
+    });
+
+    test('malformed or empty identifier → null and removed', () async {
+      await prefs.setString('agripedia.auth_handoff.LOGIN', '{"x": 1}');
+      expect(await store.readLogin(), isNull);
+      expect(await prefs.getString('agripedia.auth_handoff.LOGIN'), isNull);
+
+      await store.saveLogin(login.copyWith(identifier: ''));
+      expect(await store.readLogin(), isNull);
+      expect(await prefs.getString('agripedia.auth_handoff.LOGIN'), isNull);
+    });
   });
 }

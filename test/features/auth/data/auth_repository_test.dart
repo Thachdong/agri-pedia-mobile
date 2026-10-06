@@ -6,6 +6,7 @@ import 'package:ui_ux/features/auth/data/auth_api.dart';
 import 'package:ui_ux/features/auth/data/auth_repository.dart';
 import 'package:ui_ux/features/auth/data/dtos/activate_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/confirm_password_reset_request.dart';
+import 'package:ui_ux/features/auth/data/dtos/login_response_dto.dart';
 import 'package:ui_ux/features/auth/data/dtos/request_password_reset_request.dart';
 import 'package:ui_ux/features/auth/data/dtos/resend_code_request.dart';
 import 'package:ui_ux/features/auth/domain/models/otp_purpose.dart';
@@ -251,6 +252,63 @@ void main() {
         'code': '123456',
         'newPassword': 'new secret',
       },
+    );
+  });
+
+  test('login: POST /auth/login body, decodes tokens + profile', () async {
+    when(
+      () => client.post<LoginResponseDto>(
+        '/auth/login',
+        body: any(named: 'body'),
+        decode: any(named: 'decode'),
+      ),
+    ).thenAnswer((invocation) async {
+      final decode =
+          invocation.namedArguments[#decode] as JsonDecode<LoginResponseDto>;
+      return decode({
+        'accessToken': 'acc-1',
+        'refreshToken': 'ref-1',
+        'user': userProfileJson(),
+      });
+    });
+
+    final (:tokens, :user) = await repository.login(loginRequest);
+
+    final body = verify(
+      () => client.post<LoginResponseDto>(
+        '/auth/login',
+        body: captureAny(named: 'body'),
+        decode: any(named: 'decode'),
+      ),
+    ).captured.single;
+    expect(body, {
+      'loginType': 'EMAIL',
+      'identifier': 'farmer@example.com',
+      'password': 'secret',
+    });
+    expect(tokens.accessToken, 'acc-1');
+    expect(tokens.refreshToken, 'ref-1');
+    expect(user, distributorUser);
+  });
+
+  test('login: ApiException propagates', () async {
+    when(
+      () => client.post<LoginResponseDto>(
+        any(),
+        body: any(named: 'body'),
+        decode: any(named: 'decode'),
+      ),
+    ).thenThrow(
+      const ApiException(
+        code: 'USER_INVALID_CREDENTIALS',
+        message: 'x',
+        statusCode: 401,
+      ),
+    );
+
+    await expectLater(
+      repository.login(loginRequest),
+      throwsA(isA<ApiException>()),
     );
   });
 }

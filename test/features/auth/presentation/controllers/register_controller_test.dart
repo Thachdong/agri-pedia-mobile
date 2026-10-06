@@ -58,7 +58,7 @@ void main() {
   RegisterController notifier() =>
       container.read(registerControllerProvider.notifier);
 
-  test('FARMER success → canLogin, no handoff', () async {
+  test('FARMER success → canLogin, login handoff only', () async {
     when(() => repo.register(any())).thenAnswer((_) async {});
     final sub = container.listen(registerControllerProvider, (_, _) {});
     addTearDown(sub.close);
@@ -71,6 +71,14 @@ void main() {
     );
     verify(() => repo.register(farmerRequest)).called(1);
     verifyNever(() => store.save(any()));
+    verify(
+      () => store.saveLogin(
+        const LoginHandoff(
+          loginType: LoginType.email,
+          identifier: 'farmer@example.com',
+        ),
+      ),
+    ).called(1);
   });
 
   test('DISTRIBUTOR success → needsActivation + handoff at = clock', () async {
@@ -93,6 +101,7 @@ void main() {
         ),
       ),
     ).called(1);
+    verifyNever(() => store.saveLogin(any()));
   });
 
   test('server error → null, AsyncError with the code, no handoff', () async {
